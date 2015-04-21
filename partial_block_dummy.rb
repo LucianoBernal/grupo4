@@ -2,8 +2,10 @@ class Partial_block_dummy
   attr_accessor :clases, :bloque
 
   def initialize clases, &bloque
+    raise ArgumentError, 'Error en cantidad de argumentos' unless bloque.arity == clases.length
     @clases = clases
     @bloque = bloque
+
 
   end
 
