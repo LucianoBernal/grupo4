@@ -1,6 +1,5 @@
 require 'pry'
 
-
 class PartialBlock
   attr_accessor :verdad, :clases
   def initialize clases
