@@ -18,6 +18,8 @@ class PartialBlock
     @clases.each_with_index { |clase, index| self.bien(clase, cola(index)) }
     @verdad
   end
+
+  def
+  end
 end
 
-binding.pry
