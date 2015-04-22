@@ -5,7 +5,7 @@ class Multimethod
   end
 
   def partial_def firma, clases, &bloque
-    partialBlock = Partial_block_dummy.new(clases,&bloque)
+    partialBlock = Partial_block.new(clases,&bloque)
     if (@firmas.select{|firmaElement| firmaElement === firma}.size > 0){
 
     } else {
