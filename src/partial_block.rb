@@ -1,4 +1,4 @@
-class Partial_block_dummy
+class PartialBlock
   attr_accessor :clases, :bloque
 
   def initialize clases, &bloque
