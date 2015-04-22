@@ -1,4 +1,4 @@
-class MultiMethods
+class MultiMethod
   attr_accessor :metodos
 
   def initialize
