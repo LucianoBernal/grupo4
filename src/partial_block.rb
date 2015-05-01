@@ -26,4 +26,10 @@ class PartialBlock
     raise ArgumentError, 'Error de Argumentos, no matchean los tipos' unless self.matches(argumentos)
     @bloque.call(argumentos)
   end
+
+  def distancia(*args)
+    retorno = 0
+    args.each_with_index {|elem, index| retorno += elem.class.ancestors.index(@clases[index])*(index+1)}
+    retorno
+  end
 end

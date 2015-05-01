@@ -28,8 +28,8 @@ class Object
   def buscar_metodo_menor_distancia firma, *args
     #@metodos[firma].min {|pB| } Seria algo asi..
     #Esto no esta terminado, por lo pronto devuelve el ultimo pb agregado
-    aux = self.class.metodos[firma].select{|pB| pB.matches(*args)}
-    aux[aux.size - 1]
+    self.class.metodos[firma].select{|pB| pB.matches(*args)}.min {|left, right| left.distancia(*args) <=> right.distancia(*args)}
+    #Si el resultado de min puede ser en algunos casos un array deberiamos agarrar el primero
     #self.class.metodos[firma][self.class.metodos[firma].size - 1]
   end
 end
