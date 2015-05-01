@@ -1,26 +1,35 @@
-class MultiMethod
+require_relative 'partial_block'
+
+class Module
   attr_accessor :metodos
 
-  def initialize
-    @metodos=Hash.new
+  def metodos
+    @metodos = @metodos || Hash.new()
   end
 
 
   def
   partial_def firma, clases,&bloque
-    partialBlock = Partial_block_dummy.new(clases,&bloque)
-    if !@metodos.include? firma
-      @metodos.store(firma,[partialBlock])
+    partial_block = PartialBlock.new(clases,&bloque)
+    if !metodos.include? firma
+      define_method(firma) {|*args| instance_exec(firma, *args) {|firma, *argt| pB = buscar_metodo_menor_distancia(firma, *argt)
+                                                                                         if pB.nil?
+                                                                                                return
+                                                                                         end
+                                                                                             pB.call(*argt)}}
+      metodos.store(firma, [partial_block])
     else
-      self.borrarSiEsNecesario(firma,clases)
-      @metodos[firma].push(partialBlock)
+      metodos[firma].push(partial_block)
     end
-
   end
+end
 
-
-  def borrarSiEsNecesario(firma,clases)
-    @metodos.store(firma,(@metodos[firma].select{|pB|pB.clases!=clases}))
+class Object
+  def buscar_metodo_menor_distancia firma, *args
+    #@metodos[firma].min {|pB| } Seria algo asi..
+    #Esto no esta terminado, por lo pronto devuelve el ultimo pb agregado
+    aux = self.class.metodos[firma].select{|pB| pB.matches(*args)}
+    aux[aux.size - 1]
+    #self.class.metodos[firma][self.class.metodos[firma].size - 1]
   end
-
 end
