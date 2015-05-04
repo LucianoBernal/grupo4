@@ -19,8 +19,13 @@ class Module
                                                                                              pB.call(*argt)}}
       metodos.store(firma, [partial_block])
     else
+      self.borrarSiEsNecesario(firma,clases)
       metodos[firma].push(partial_block)
     end
+  end
+
+  def borrarSiEsNecesario(firma,clases)
+    @metodos.store(firma,(@metodos[firma].select{|pB|pB.clases!=clases}))
   end
 end
 
