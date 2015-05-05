@@ -24,7 +24,7 @@ class PartialBlock
 
   def call(*argumentos)
     raise ArgumentError, 'Error de Argumentos, no matchean los tipos' unless self.matches(argumentos)
-    @bloque.call(argumentos)
+    @bloque.call(*argumentos)
   end
 
   def distancia(*args)

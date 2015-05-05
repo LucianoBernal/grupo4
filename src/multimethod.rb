@@ -3,6 +3,8 @@ require_relative 'partial_block'
 class Module
   attr_accessor :metodos
 
+  alias_method :old_respond, :respond_to?
+
   def metodos
      @metodos = @metodos || Hash.new()
   end
@@ -33,6 +35,25 @@ class Module
   def borrarSiEsNecesario(firma,clases)
     @metodos.store(firma,(@metodos[firma].select{|pB|pB.clases!=clases}))
   end
+
+  def multimethods
+    metodos_totales.keys
+  end
+
+  def multimethod sym
+    raise NoMethodError, 'No existe el multimethod' unless metodos_totales[sym] != nil
+    metodos_totales[sym]
+  end
+
+  def respond_to? sym, priv = false, clases = nil
+    if clases.nil?
+      self.old_respond(sym, priv) || self.multimethods.include?(sym)
+    else
+      clases_obtenidas = metodos_totales[sym] || Array.new
+      clases_obtenidas.any? {|pB| pB.clases = clases}
+    end
+
+  end
 end
 
 class Object
@@ -51,5 +72,23 @@ class Object
 
   def metodos_totales
     Hash.new
+  end
+end
+
+class A
+  partial_def :concat, [String, String] do |s1,s2|
+    s1 + s2
+  end
+
+  partial_def :concat, [String, Integer] do |s1,n|
+    s1 * n
+  end
+
+  partial_def :concat, [Array] do |a|
+    a.join
+  end
+
+  partial_def :concat, [Object, Object] do |o1, o2|
+    "Objetos concatenados"
   end
 end

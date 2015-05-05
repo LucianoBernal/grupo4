@@ -24,7 +24,7 @@ describe 'metaprogramming tests' do
     expect(helloBlock.matches("a", "b")).to eq(FALSE)
   end
 
-  it 'ROJO' do
+  it 'TP example 1 (call works: returns Hello World! with World!)' do
     expect(helloBlock.call("world!")).to eq("Hello world!")
   end
 
