@@ -10,8 +10,12 @@ class Module
   end
 
   def metodos_totales
-    metodos.merge!(super) {|key, valor_mio, valor_super|
-                   valor_mio.concat(valor_super.select{|pB| valor_mio.all?{|pB_prioridad| pB_prioridad.clases!=pB.clases} })}
+   ## metodos.merge!(super) {|key, valor_mio, valor_super|
+   ##                valor_mio.concat(valor_super.select{|pB| valor_mio.all?{|pB_prioridad| pB_prioridad.clases!=pB.clases} })}
+    acum=metodos
+    self.ancestors.each{|ancestro| acum= acum.merge!(ancestro.metodos) {|key, valor_mio, valor_super|
+                  valor_mio.concat(valor_super.select{|pB| valor_mio.all?{|pB_prioridad| pB_prioridad.clases!=pB.clases} })}}
+    acum
   end
 
 
@@ -70,9 +74,6 @@ class Object
     self.singleton_class.partial_def firma,clases,&bloque
   end
 
-  def metodos_totales
-    Hash.new
-  end
 end
 
 class A
