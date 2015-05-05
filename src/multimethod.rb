@@ -4,8 +4,15 @@ class Module
   attr_accessor :metodos
 
   def metodos
-    @metodos = @metodos || Hash.new()
+     @metodos = @metodos || Hash.new()
   end
+
+  def metodos_totales
+    metodos.merge!(super) {|key, valor_mio, valor_super|
+                   valor_mio.concat(valor_super.select{|pB| valor_mio.all?{|pB_prioridad| pB_prioridad.clases!=pB.clases} })}
+  end
+
+
 
   def
   partial_def firma, clases,&bloque
@@ -40,5 +47,9 @@ class Object
   def
     partial_def firma,clases,&bloque
     self.singleton_class.partial_def firma,clases,&bloque
+  end
+
+  def metodos_totales
+    Hash.new
   end
 end
