@@ -7,14 +7,13 @@ class Module
     @metodos = @metodos || Hash.new()
   end
 
-
   def
   partial_def firma, clases,&bloque
     partial_block = PartialBlock.new(clases,&bloque)
     if !metodos.include? firma
       define_method(firma) {|*args| instance_exec(firma, *args) {|firma, *argt| pB = buscar_metodo_menor_distancia(firma, *argt)
                                                                                          if pB.nil?
-                                                                                                return
+                                                                                           raise ArgumentError, 'Error de Argumentos'
                                                                                          end
                                                                                              pB.call(*argt)}}
       metodos.store(firma, [partial_block])
@@ -36,5 +35,10 @@ class Object
     self.class.metodos[firma].select{|pB| pB.matches(*args)}.min {|left, right| left.distancia(*args) <=> right.distancia(*args)}
     #Si el resultado de min puede ser en algunos casos un array deberiamos agarrar el primero
     #self.class.metodos[firma][self.class.metodos[firma].size - 1]
+  end
+
+  def
+    partial_def firma,clases,&bloque
+    self.singleton_class.partial_def firma,clases,&bloque
   end
 end
