@@ -26,7 +26,7 @@ class Module
     if !metodos.include? firma
       define_method(firma) { |*args| pB = instance_exec(firma, *args) {buscar_metodo_menor_distancia.call(firma,*args)}
       if pB.nil?
-        raise ArgumentError, 'Error de Argumentos'
+        super(*args)
       end
       pB.call(*args) }
       metodos.store(firma, [partial_block])
@@ -51,7 +51,7 @@ class Module
 
   def respond_to? sym, priv = false, clases = nil
     if clases.nil?
-      self.old_respond(sym, priv) || self.multimethods.include?(sym)
+      self.old_respond(sym, priv) || self.class.multimethods.include?(sym)
     else
       clases_obtenidas = metodos_totales[sym] || Array.new
       clases_obtenidas.any? { |pB| pB.clases = clases }
