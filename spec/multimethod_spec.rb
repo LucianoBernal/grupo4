@@ -50,4 +50,30 @@ describe 'Multimethod tests' do
     expect(a.concat(Object.new,3)).to eq("Objetos concatenados")
   end
 
+  it 'agrega multimethods a un unico objeto' do
+    class Tanque
+    end
+    class Soldado
+      attr_accessor :nombre
+
+      def initialize nombre
+        @nombre = nombre
+      end
+    end
+    class Tanque
+    end
+    tanque_modificado = Tanque.new
+    tanque_modificado.partial_def :bocinar, [Soldado] do |soldado|
+      "Honk Honk! #{soldado.nombre}"
+    end
+    tanque_modificado.partial_def :bocinar, [Tanque] do |tanque|
+      "Hooooooonk!"
+    end
+
+    expect(tanque_modificado.bocinar(Soldado.new("pepe"))).to eq("Honk Honk! pepe")
+    expect(tanque_modificado.bocinar(Tanque.new)).to eq("Hooooooonk!")
+    expect{Tanque.new.tocar_bocina(Tanque.new)}.to raise_error(NoMethodError)
+
+  end
+
 end
