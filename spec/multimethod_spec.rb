@@ -12,24 +12,27 @@ describe 'Multimethod tests' do
     partial_def :concat, [Array] do |a|
       a.join
     end
+    partial_def :concat, [Object, Object] do |o1, o2|
+      "Objetos concatenados"
+    end
   end
   a = A.new
 
   it 'concat("hello", " world") devuelve "helloworld"' do
-    expect(a.concat('hello', ' world')).to eq('hello world')
+    expect(b.concat('hello', ' world')).to eq('hello world')
   end
 
   it 'concat("hello", 3) devuelve "hellohellohello"' do
     expect(a.concat("hello", 3)).to eq('hellohellohello')
   end
 
-  it "concat(['hello', ' world', '!']) devuelve 'hello world!'" do
+  it "concat([hello,  world, !]) devuelve hello world!" do
     expect(a.concat(['hello', ' world', '!'])).to eq('hello world!')
-  end #DA ROJO
+  end #ROJO
 
-  it 'concat con 3 parametros lanza una excepción!' do
-    expect(a.concat('hello', 'world', '!')).to raise_error(ArgumentError)
-  end #EMPTY TEST SUITE?
+  it 'concat con 3' do
+    expect{a.concat('hello', 'world', '!')}.to raise_error(ArgumentError)
+  end #ROJO
 
   it 'funciona metodo multimethods()' do
     expect(A.multimethods).to eq([:concat])
@@ -38,5 +41,13 @@ describe 'Multimethod tests' do
   #it 'funciona metodo multimethod(:metodo)' do
   #  expect(A.multimethod(:concat)).to eq(#PONGO LA REPRESENTACION QUE ME TIRA PRY??))
   #end
+
+  it '(Hello, 2)' do
+    expect(a.concat("Hello", 2)).to eq('HelloHello')
+  end
+
+  it 'ObjetosConcatenados' do
+    expect(a.concat(Object.new,3)).to eq("Objetos concatenados")
+  end
 
 end
