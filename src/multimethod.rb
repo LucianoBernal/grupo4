@@ -59,15 +59,32 @@ class Module
 
   end
 
-=begin
+
   def base
     self
   end
 
-  def method_missing(sym,*args,&bloque)
-    self
+  def allMultimethod sym
+    if cortarIteracion sym
+     return []
+    else
+    implementaciones=metodos[sym]||Array.new
+    (implementaciones).concat(self.ancestors[1].allMultimethod sym)
+    end
   end
-=end
+
+  def cortarIteracion sym
+     (estaDefinidoNormal? sym) || (!((instance_methods).include? sym))
+  end
+
+  def estaDefinidoNormal? sym
+     ((instance_methods false).include? sym) && (metodos[sym].nil?)
+  end
+
+  #def method_missing(sym,*args,&bloque)
+  #  self.multimethod sym || (self.superclass.multimethod sym)
+  #end
+
 end
 
 
@@ -80,3 +97,5 @@ class Object
     []
   end
 end
+
+
