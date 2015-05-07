@@ -9,26 +9,17 @@ class Module
     @metodos = @metodos || Hash.new()
   end
 
-  def metodos_totales
-    ## metodos.merge!(super) {|key, valor_mio, valor_super|
-    ##                valor_mio.concat(valor_super.select{|pB| valor_mio.all?{|pB_prioridad| pB_prioridad.clases!=pB.clases} })}
-    acum=metodos
-    self.ancestors.each { |ancestro| acum= acum.merge!(ancestro.metodos) { |key, valor_mio, valor_super|
-      valor_mio.concat(valor_super.select { |pB| valor_mio.all? { |pB_prioridad| pB_prioridad.clases!=pB.clases } }) } }
-    acum
-  end
-
-
   def
   partial_def firma, clases, &bloque
     partial_block = PartialBlock.new(clases, &bloque)
-    buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.metodos_totales[sym].select { |pB| pB.matches(*argt) }.min { |left, right| left.distancia(*argt) <=> right.distancia(*argt) } }
+    buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.metodos[sym].select { |pB| pB.matches(*argt) }.min { |left, right| left.distancia(*argt) <=> right.distancia(*argt) } }
     if !metodos.include? firma
-      define_method(firma) { |*args| pB = instance_exec(firma, *args) {buscar_metodo_menor_distancia.call(firma,*args)}
+      define_method(firma) { |*args| pB = instance_exec(firma, *args) {buscar_metodo_menor_distancia.call(firma, *args)}
       if pB.nil?
         super(*args)
-      end
-      pB.call(*args) }
+      else
+      pB.call(*args)
+      end}
       metodos.store(firma, [partial_block])
     else
       self.borrarSiEsNecesario(firma, clases)
@@ -41,21 +32,30 @@ class Module
   end
 
   def multimethods
-    metodos_totales.keys
+    metodos.keys.concat(instance_eval {self.ancestors[1].multimethods})
   end
 
   def multimethod sym
-    raise NoMethodError, 'No existe el multimethod' unless metodos_totales[sym] != nil
-    metodos_totales[sym]
+    raise NoMethodError, 'No existe el multimethod' unless metodos[sym] != nil
+    metodos[sym]
+  end
+  def respondo_a? sym, clases
+    if metodos[sym].nil?
+      return false
+    end
+    (metodos[sym].any? {|pB| pB.clases === clases})
   end
 
-  def respond_to? sym, priv = false, clases = nil
-    if clases.nil?
-      self.old_respond(sym, priv) || self.class.multimethods.include?(sym)
-    else
-      clases_obtenidas = metodos_totales[sym] || Array.new
-      clases_obtenidas.any? { |pB| pB.clases = clases }
+  def respond_to? sym, priv = false, clases = []
+    #if clases.nil?
+    if instance_eval {self.equal? Module}
+      return false
     end
+    self.old_respond(sym, priv) || self.respondo_a?(sym, clases) || self.ancestors[1].respondo_a?(sym, clases)
+    #else
+    #  clases_obtenidas = metodos[sym] || Array.new
+    #  clases_obtenidas.any? { |pB| pB.clases = clases }
+    #end
 
   end
 end
@@ -65,7 +65,9 @@ class Object
   partial_def firma, clases, &bloque
     self.singleton_class.partial_def firma, clases, &bloque
   end
-
+  def multimethods
+    []
+  end
 end
 
 class A
