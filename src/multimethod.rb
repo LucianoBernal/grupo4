@@ -14,11 +14,11 @@ class Module
     partial_block = PartialBlock.new(clases, &bloque)
     buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.metodos[sym].select { |pB| pB.matches(*argt) }.min { |left, right| left.distancia(*argt) <=> right.distancia(*argt) } }
     if !metodos.include? firma
-      define_method(firma) { |*args| pB = instance_exec(firma, *args) {buscar_metodo_menor_distancia.call(firma, *args)}
+      define_method(firma) {|*args| pB = buscar_metodo_menor_distancia.call(firma, *args)
       if pB.nil?
         super(*args)
       else
-      pB.call(*args)
+      instance_exec(*args,&pB.bloque)
       end}
       metodos.store(firma, [partial_block])
     else
@@ -58,7 +58,18 @@ class Module
     #end
 
   end
+
+=begin
+  def base
+    self
+  end
+
+  def method_missing(sym,*args,&bloque)
+    self
+  end
+=end
 end
+
 
 class Object
   def
