@@ -19,7 +19,7 @@ describe 'Multimethod tests' do
   a = A.new
 
   it 'concat("hello", " world") devuelve "helloworld"' do
-    expect(b.concat('hello', ' world')).to eq('hello world')
+    expect(a.concat('hello', ' world')).to eq('hello world')
   end
 
   it 'concat("hello", 3) devuelve "hellohellohello"' do
@@ -37,10 +37,6 @@ describe 'Multimethod tests' do
   it 'funciona metodo multimethods()' do
     expect(A.multimethods).to eq([:concat])
   end
-
-  #it 'funciona metodo multimethod(:metodo)' do
-  #  expect(A.multimethod(:concat)).to eq(#PONGO LA REPRESENTACION QUE ME TIRA PRY??))
-  #end
 
   it '(Hello, 2)' do
     expect(a.concat("Hello", 2)).to eq('HelloHello')
