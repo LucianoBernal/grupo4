@@ -69,21 +69,3 @@ class Object
     []
   end
 end
-
-class A
-  partial_def :concat, [String, String] do |s1, s2|
-    s1 + s2
-  end
-
-  partial_def :concat, [String, Integer] do |s1, n|
-    s1 * n
-  end
-
-  partial_def :concat, [Array] do |a|
-    a.join
-  end
-
-  partial_def :concat, [Object, Object] do |o1, o2|
-    "Objetos concatenados"
-  end
-end

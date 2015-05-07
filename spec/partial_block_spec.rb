@@ -1,7 +1,7 @@
 require 'rspec'
 require_relative '../src/partial_block'
 
-describe 'metaprogramming tests' do
+describe 'PartialBlock tests' do
   helloBlock = PartialBlock.new([String]) do |who| "Hello #{who}" end
 
   it 'New partialBlock with wrong classes arity rise ArgumentError' do
