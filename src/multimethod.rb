@@ -68,13 +68,13 @@ class Module
     if cortarIteracion sym
      return []
     else
-    implementaciones=metodos[sym]||Array.new
-    (implementaciones).concat(self.ancestors[1].allMultimethod sym)
+    implementaciones=Array.new(metodos[sym] || [])
+    implementaciones.concat(superclass.allMultimethod sym)
     end
   end
 
   def cortarIteracion sym
-     (estaDefinidoNormal? sym) || (!((instance_methods).include? sym))
+     (estaDefinidoNormal? sym) || (!instance_methods.include? sym)
   end
 
   def estaDefinidoNormal? sym
