@@ -60,16 +60,14 @@ class Module
   end
 
 
-  def base
-    self
-  end
+
 
   def allMultimethod sym
     if cortarIteracion sym
      return []
     else
     implementaciones=Array.new(metodos[sym] || [])
-    implementaciones.concat(superclass.allMultimethod sym)
+    implementaciones.concat((superclass.allMultimethod sym).select{|partialBlock| implementaciones.all?{|pB|pB.clases!=partialBlock.clases}})
     end
   end
 
@@ -81,9 +79,7 @@ class Module
      ((instance_methods false).include? sym) && (metodos[sym].nil?)
   end
 
-  #def method_missing(sym,*args,&bloque)
-  #  self.multimethod sym || (self.superclass.multimethod sym)
-  #end
+
 
 end
 
@@ -96,6 +92,28 @@ class Object
   def multimethods
     []
   end
+=begin
+  def base
+    self
+  end
+=end
+
+#  def self.method_missing(sym,*args,&bloque)
+#    self
+ #   implementaciones=self.singleton_class.allMultimethod(sym)
+=begin    if (implementaciones).size.equal?0
+      raise NoMethodError
+    else
+      posible_partial_block=implementaciones.bsearch{|pB| pB.clases === args[0]}
+      if posible_partial_block.nil?
+        raise ArgumentError
+      else
+        argumentos=Array new(*args.drop(1))
+        self.instance_exec(argumentos,&posible_partial_block.bloque)
+      end
+    end
+=end
+#  end
 end
 
 
