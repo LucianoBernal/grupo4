@@ -97,16 +97,6 @@ class Object
     Base.settear_Contexto(self)
   end
 
-
-  def self.method_missing(sym,*args,&bloque)
-    clases=args[0]
-    argumentosMetodo=Array.new(args.drop(1))
-    if (!(clases.eql? []) && (argumentosMetodo.eql? []))
-      raise ArgumentError, 'Faltan argumentos'
-    end
-    self.ejecutar_con_base(sym,clases,argumentosMetodo)
-
-  end
 end
 
 class Base
@@ -129,6 +119,15 @@ class Base
         @@contexto.instance_exec(*args,&posible_partial_block[0].bloque)
       end
     end
+  end
+
+  def self.method_missing(sym,*args,&bloque)
+    clases=args[0]
+    argumentosMetodo=Array.new(args.drop(1))
+    if (!(clases.eql? []) && (argumentosMetodo.eql? []))
+      raise ArgumentError, 'Faltan argumentos'
+    end
+    self.ejecutar_con_base(sym,clases,argumentosMetodo)
 
   end
 end
