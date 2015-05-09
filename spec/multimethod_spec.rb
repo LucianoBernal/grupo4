@@ -53,7 +53,7 @@ describe 'Multimethod tests' do
     expect(a.concat("hello", 3)).to eq('hellohellohello')
   end
 
-  it "concat([hello,  world, !]) devuelve hello world!" do
+  it 'concat([hello,  world, !]) devuelve hello world!' do
     expect(a.concat(['hello', ' world', '!'])).to eq('hello world!')
   end #ROJO
 

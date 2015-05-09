@@ -10,11 +10,11 @@ class Module
   def
   partial_def firma, clases, &bloque
     partial_block = PartialBlock.new(clases, &bloque)
-    buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.metodos[sym].select { |pB| pB.matches(*argt) }.min { |left, right| left.distancia(*argt) <=> right.distancia(*argt) } }
+    buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.dame_clase.allMultimethod(sym).select { |pB| pB.matches(*argt) }.min { |left, right| left.distancia(*argt) <=> right.distancia(*argt) } }
     if !metodos.include? firma
-      define_method(firma) {|*args| pB = buscar_metodo_menor_distancia.call(firma, *args)
+      define_method(firma) {|*args| pB = instance_exec(firma,*args,&buscar_metodo_menor_distancia)
       if pB.nil?
-        super(*args)
+        raise ArgumentError,'Error de argumentos'
       else
       instance_exec(*args,&pB.bloque)
       end}
