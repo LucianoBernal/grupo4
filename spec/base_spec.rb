@@ -2,13 +2,13 @@ require 'rspec'
 require_relative '../src/multimethod'
 
 describe 'Base tests' do
-  class A
+  class Padre
     partial_def :m, [Object] do |o|
       "A>m"
     end
   end
 
-  class B < A
+  class Hijo < Padre
     partial_def :m, [Integer] do |i|
       base.m([Numeric], i) + " => B>m_integer(#{i})"
     end
@@ -23,15 +23,15 @@ describe 'Base tests' do
   end
 
   it 'funciona base en el propio metodo (pasando por todas las implementaciones de m)' do
-    expect(B.new.m(1)).to eq("A>m => B>m_numeric => B>m_integer(1)")
+    expect(Hijo.new.m(1)).to eq("A>m => B>m_numeric => B>m_integer(1)")
   end
 
   it 'funciona base en el otro metodo' do
-    expect(B.new.m(1.0)).to eq("A>m => B>m_numeric")
+    expect(Hijo.new.m(1.0)).to eq("A>m => B>m_numeric")
   end
 
   it 'funciona base llamando a otros metodos' do
-    expect(B.new.o(1)).to eq("O method => A>m => B>m_numeric => B>m_integer(1)")
+    expect(Hijo.new.o(1)).to eq("O method => A>m => B>m_numeric => B>m_integer(1)")
   end
 
 end

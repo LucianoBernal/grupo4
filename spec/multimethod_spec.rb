@@ -2,7 +2,7 @@ require 'rspec'
 require_relative '../src/multimethod'
 
 describe 'Multimethod tests' do
-  class A
+  class Class_with_multimethods
     partial_def :concat, [String, String] do |s1, s2|
       s1 + s2
     end
@@ -16,7 +16,7 @@ describe 'Multimethod tests' do
       "Objetos concatenados"
     end
   end
-  a=A.new
+  object_with_multimethods=Class_with_multimethods.new
 
 
   class Tanque
@@ -35,7 +35,7 @@ describe 'Multimethod tests' do
     end
   end
 
-  class Soldado
+  class Soldado_con_nombre
     attr_accessor :nombre
 
     def initialize nombre
@@ -47,31 +47,31 @@ describe 'Multimethod tests' do
   end
 
   it 'concat("hello", " world") devuelve "helloworld"' do
-    expect(a.concat('hello', ' world')).to eq('hello world')
+    expect(object_with_multimethods.concat('hello', ' world')).to eq('hello world')
   end
 
   it 'concat("hello", 3) devuelve "hellohellohello"' do
-    expect(a.concat("hello", 3)).to eq('hellohellohello')
+    expect(object_with_multimethods.concat("hello", 3)).to eq('hellohellohello')
   end
 
   it 'concat([hello,  world, !]) devuelve hello world!' do
-    expect(a.concat(['hello world!'])).to eq('hello world!')
+    expect(object_with_multimethods.concat(['hello world!'])).to eq('hello world!')
   end
 
   it 'concat con 3' do
-    expect{a.concat('hello', 'world', '!')}.to raise_error(ArgumentError)
+    expect{object_with_multimethods.concat('hello', 'world', '!')}.to raise_error(ArgumentError)
   end
 
   it 'funciona metodo multimethods()' do
-    expect(A.multimethods).to eq([:concat])
+    expect(Class_with_multimethods.multimethods).to eq([:concat])
   end
 
   it '(Hello, 2)' do
-    expect(a.concat("Hello", 2)).to eq('HelloHello')
+    expect(object_with_multimethods.concat("Hello", 2)).to eq('HelloHello')
   end
 
   it 'ObjetosConcatenados' do
-    expect(a.concat(Object.new,3)).to eq("Objetos concatenados")
+    expect(object_with_multimethods.concat(Object.new,3)).to eq("Objetos concatenados")
   end
 
   it 'multimethod permite soporta self' do
@@ -79,12 +79,12 @@ describe 'Multimethod tests' do
       partial_def :ataca_a, [Tanque] do |objetivo|
         self.atacar_con_canion(objetivo)
       end
-      partial_def :ataca_a, [Soldado] do |objetivo|
+      partial_def :ataca_a, [Soldado_con_nombre] do |objetivo|
         self.atacar_con_metralla(objetivo)
       end
     end
     t = Tanque.new
-    expect(t.ataca_a(Soldado.new("Ryan"))).to eq("Tra tra tra")
+    expect(t.ataca_a(Soldado_con_nombre.new("Ryan"))).to eq("Tra tra tra")
     expect(t.ataca_a(Tanque.new)).to eq("canionazooo")
   end
 
@@ -93,7 +93,7 @@ describe 'Multimethod tests' do
       partial_def :ataca_a, [Tanque] do |objetivo|
         self.atacar_con_canion(objetivo)
       end
-      partial_def :ataca_a, [Soldado] do |objetivo|
+      partial_def :ataca_a, [Soldado_con_nombre] do |objetivo|
         self.atacar_con_metralla(objetivo)
       end
      partial_def :ataca_a, [Avion] do |avion|
@@ -101,16 +101,16 @@ describe 'Multimethod tests' do
      end
     end
     expect(Tanque.new.ataca_a(Avion.new)).to eq("satelite")
-    expect(Tanque.new.ataca_a(Soldado.new("Ryan"))).to eq("Tra tra tra")
+    expect(Tanque.new.ataca_a(Soldado_con_nombre.new("Ryan"))).to eq("Tra tra tra")
     expect(Tanque.new.ataca_a(Tanque.new)).to eq("canionazooo")
-  end #MAL PROGRAMADO
+  end
 
   it 'definicion parcial cambiada pisa la anterior' do
     class Tanque
       partial_def :ataca_a, [Tanque] do |objetivo|
         self.atacar_con_canion(objetivo)
       end
-      partial_def :ataca_a, [Soldado] do |objetivo|
+      partial_def :ataca_a, [Soldado_con_nombre] do |objetivo|
         self.atacar_con_metralla(objetivo)
       end
       partial_def :ataca_a, [Avion] do |avion|
@@ -118,22 +118,22 @@ describe 'Multimethod tests' do
       end
     end
     class Tanque
-      partial_def :ataca_a, [Soldado] do |soldado|
+      partial_def :ataca_a, [Soldado_con_nombre] do |soldado|
         self.atacar_distinto(soldado)
       end
     end
-    expect(Tanque.new.ataca_a(Soldado.new("Ryan"))).to eq("distinto")
+    expect(Tanque.new.ataca_a(Soldado_con_nombre.new("Ryan"))).to eq("distinto")
   end
 
   it 'agrega multimethods a un unico objeto' do
     tanque_modificado = Tanque.new
-    tanque_modificado.partial_def :bocinar, [Soldado] do |soldado|
+    tanque_modificado.partial_def :bocinar, [Soldado_con_nombre] do |soldado|
       "Honk Honk! #{soldado.nombre}"
     end
     tanque_modificado.partial_def :bocinar, [Tanque] do |tanque|
       "Hooooooonk!"
     end
-    expect(tanque_modificado.bocinar(Soldado.new("pepe"))).to eq("Honk Honk! pepe")
+    expect(tanque_modificado.bocinar(Soldado_con_nombre.new("pepe"))).to eq("Honk Honk! pepe")
     expect(tanque_modificado.bocinar(Tanque.new)).to eq("Hooooooonk!")
     expect{Tanque.new.tocar_bocina(Tanque.new)}.to raise_error(NoMethodError)
 
