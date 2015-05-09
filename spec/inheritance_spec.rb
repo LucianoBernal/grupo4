@@ -22,7 +22,7 @@ describe 'Herencia tests' do
       "distinto"
     end
     partial_def :ataca_a,[Soldado] do |soldado| self.atacar_con_metralla soldado end
-    partial_def :ataca_a,[Tanque] do |tanque| self.atacar_con_canion soldado tanque end
+    partial_def :ataca_a,[Tanque] do |tanque| self.atacar_con_canion tanque end
   end
   class A
     partial_def :m, [String] do |s|
@@ -71,7 +71,7 @@ describe 'Herencia tests' do
   it'funciona busqueda menor distancia 1' do
     b = B.new
     expect(b.m("hello")).to eq("A>m hello")
-  end
+  end #ROJO
 
   it'funciona busqueda menor distancia 2' do
     b = B.new
