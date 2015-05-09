@@ -10,8 +10,7 @@ class PartialBlock
   end
 
   def matches *argumentos
-    argumentos= argumentos.flatten
-    (self.longitudCorrecta(argumentos)) && ((self.argumentosCorrectos(argumentos)))
+     (self.longitudCorrecta(argumentos)) && ((self.argumentosCorrectos(argumentos)))
   end
 
   def argumentosCorrectos argumentos
@@ -23,7 +22,7 @@ class PartialBlock
   end
 
   def call(*argumentos)
-    raise ArgumentError, 'Error de Argumentos, no matchean los tipos' unless self.matches(argumentos)
+    raise ArgumentError, 'Error de Argumentos, no matchean los tipos' unless self.matches(*argumentos)
     @bloque.call(*argumentos)
   end
 

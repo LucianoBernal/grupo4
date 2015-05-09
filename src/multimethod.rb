@@ -56,7 +56,7 @@ class Module
   end
 
   def matcheaAlguno(sym,clases)
-    allMultimethod(sym).any?{|pB|pB.matches(clases)}
+    allMultimethod(sym).any?{|pB|pB.matches(*clases)}
   end
 
   def dame_clase

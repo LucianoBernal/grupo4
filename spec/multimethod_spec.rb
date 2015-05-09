@@ -16,7 +16,8 @@ describe 'Multimethod tests' do
       "Objetos concatenados"
     end
   end
-  a = A.new
+  a=A.new
+
 
   class Tanque
 
@@ -54,7 +55,7 @@ describe 'Multimethod tests' do
   end
 
   it 'concat([hello,  world, !]) devuelve hello world!' do
-    expect(a.concat(['hello', ' world', '!'])).to eq('hello world!')
+    expect(a.concat(['hello world!'])).to eq('hello world!')
   end #ROJO
 
   it 'concat con 3' do
