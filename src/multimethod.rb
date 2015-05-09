@@ -94,21 +94,21 @@ class Object
   end
 
   def base
-    Base.settear_Contexto(self)
+    Base.new(self)
   end
 
 end
 
 class Base
+  attr_accessor :contexto
 
-  def self.settear_Contexto(contexto)
-    @@contexto=contexto
-    self
+  def initialize(context)
+    @contexto=context
   end
 
 
-  def self.ejecutar_con_base(sym,clases,args)
-    implementaciones=@@contexto.singleton_class.allMultimethod(sym)
+  def ejecutar_con_base(sym,clases,args)
+    implementaciones=@contexto.singleton_class.allMultimethod(sym)
     if (implementaciones).size.equal?0
       raise NoMethodError
     else
@@ -116,18 +116,18 @@ class Base
       if posible_partial_block.eql? []
         raise ArgumentError
       else
-        @@contexto.instance_exec(*args,&posible_partial_block[0].bloque)
+        @contexto.instance_exec(*args,&posible_partial_block[0].bloque)
       end
     end
   end
 
-  def self.method_missing(sym,*args,&bloque)
+  def method_missing(sym,*args,&bloque)
     clases=args[0]
     argumentosMetodo=Array.new(args.drop(1))
     if (!(clases.eql? []) && (argumentosMetodo.eql? []))
       raise ArgumentError, 'Faltan argumentos'
     end
-    self.ejecutar_con_base(sym,clases,argumentosMetodo)
+    ejecutar_con_base(sym,clases,argumentosMetodo)
 
   end
 end
