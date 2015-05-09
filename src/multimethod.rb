@@ -3,8 +3,6 @@ require_relative 'partial_block'
 class Module
   attr_accessor :metodos
 
-  alias_method :old_respond, :respond_to?
-
   def metodos
     @metodos = @metodos || Hash.new()
   end
@@ -39,28 +37,6 @@ class Module
     raise NoMethodError, 'No existe el multimethod' unless metodos[sym] != nil
     metodos[sym]
   end
-  def respondo_a? sym, clases
-    if metodos[sym].nil?
-      return false
-    end
-    (metodos[sym].any? {|pB| pB.clases === clases})
-  end
-
-  def respond_to? sym, priv = false, clases = []
-    #if clases.nil?
-    if instance_eval {self.equal? Module}
-      return false
-    end
-    self.old_respond(sym, priv) || self.respondo_a?(sym, clases) || self.ancestors[1].respondo_a?(sym, clases)
-    #else
-    #  clases_obtenidas = metodos[sym] || Array.new
-    #  clases_obtenidas.any? { |pB| pB.clases = clases }
-    #end
-
-  end
-
-
-
 
   def allMultimethod sym
     if cortarIteracion sym
@@ -79,6 +55,13 @@ class Module
      ((instance_methods false).include? sym) && (metodos[sym].nil?)
   end
 
+  def matcheaAlguno(sym,clases)
+    allMultimethod(sym).any?{|pB|pB.matches(clases)}
+  end
+
+  def dame_clase
+    self
+  end
 
 
 end
@@ -97,7 +80,21 @@ class Object
     Base.new(self)
   end
 
+  def respond_to?(sym,priv=false,clases=nil)
+    if(clases.nil?)
+      super(sym,priv)
+    else
+      self.dame_clase.matcheaAlguno sym,clases
+    end
+  end
+
+  def dame_clase
+    self.singleton_class
+  end
+
 end
+
+
 
 class Base
   attr_accessor :contexto
