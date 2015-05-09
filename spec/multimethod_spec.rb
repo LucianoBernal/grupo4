@@ -56,11 +56,11 @@ describe 'Multimethod tests' do
 
   it 'concat([hello,  world, !]) devuelve hello world!' do
     expect(a.concat(['hello world!'])).to eq('hello world!')
-  end #ROJO
+  end
 
   it 'concat con 3' do
     expect{a.concat('hello', 'world', '!')}.to raise_error(ArgumentError)
-  end #ROJO
+  end
 
   it 'funciona metodo multimethods()' do
     expect(A.multimethods).to eq([:concat])

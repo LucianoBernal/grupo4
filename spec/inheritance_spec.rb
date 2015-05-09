@@ -71,7 +71,7 @@ describe 'Herencia tests' do
   it'funciona busqueda menor distancia 1' do
     b = B.new
     expect(b.m("hello")).to eq("A>m hello")
-  end #ROJO
+  end
 
   it'funciona busqueda menor distancia 2' do
     b = B.new
