@@ -1,6 +1,7 @@
 require 'rspec'
 require_relative '../src/multimethod'
 
+
 describe 'respond_to? tests' do
   class Respond_to_concat_fixture
     partial_def :concat, [String, Integer] do |s1,n|

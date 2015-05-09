@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../src/multimethod'
+require_relative '../src/base'
 
 describe 'Base tests' do
   class Padre
