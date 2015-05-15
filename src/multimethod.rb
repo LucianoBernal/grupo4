@@ -74,7 +74,7 @@ class Module
 
   def multimethods
     retorno=Array.new (partial_methods.map{|partial_method| partial_method.sym})
-    ancestros=self.dame_clase.ancestors
+    ancestros=self.ancestors
     ancestros.each{|ancestro|
       ancestro_multimethods=Array.new(ancestro.partial_methods.map{|partial_method| partial_method.sym})
       ancestro_multimethods.each{|sym|
@@ -92,19 +92,23 @@ class Module
   end
 
   def allMultimethod sym
-    if cortarIteracion sym
-      return []
-    else
-      p_methods=[]
-      if partial_method(sym) != nil
-        p_methods=partial_method(sym).partial_blocks
-      end
-      implementaciones=Array.new(p_methods)
-      implementaciones.concat((superclass.allMultimethod sym).select{|partialBlock| implementaciones.all?{|pB|pB.clases!=partialBlock.clases}})
+    implementaciones=[]
+    if partial_method(sym) != nil
+      implementaciones.concat(partial_method(sym).partial_blocks)
     end
+    self.ancestors.each{|ancestro|
+      if cortarBusqueda sym
+        return implementaciones
+      else
+      if ancestro.partial_method(sym)!= nil
+      implementaciones.concat((ancestro.partial_method(sym).partial_blocks).select{|partialBlock| implementaciones.all?{|pB|pB.clases!=partialBlock.clases}})
+      end
+      end
+    }
+    return implementaciones
   end
 
-  def cortarIteracion sym
+  def cortarBusqueda sym
     (estaDefinidoNormal? sym) || (!instance_methods.include? sym)
   end
 
