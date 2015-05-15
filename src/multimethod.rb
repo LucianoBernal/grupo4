@@ -1,4 +1,6 @@
 require_relative 'partial_block'
+require_relative 'base'
+
 
 class PartialMethod
   attr_accessor :sym, :partial_blocks
@@ -49,10 +51,21 @@ class Module
   def partial_def sym, clases, &bloque
     buscar_metodo_menor_distancia= Proc.new { |sym, *argt| self.dame_clase.allMultimethod(sym).select { |pB| pB.matches(*argt) }.min_by{|p_block| p_block.clases.distancia *argt} }
     if partial_method(sym).nil?
+      define_method(:base){|*args|
+        if(args.eql? [])
+          return Base.new(self)
+        else
+          return BaseImplicita.unique_instance.ejecutate(*args)
+        end
+      }
+      define_method(:partial_def){|firma, clases, &bloque|
+        self.singleton_class.partial_def firma, clases, &bloque
+      }
       define_method(sym) {|*args| pB = instance_exec(sym,*args,&buscar_metodo_menor_distancia)
       if pB.nil?
         raise ArgumentError,'Error de argumentos'
       else
+        BaseImplicita.unique_instance.cambiar_todo_el_contexto(self,sym,pB.clases)
         instance_exec(*args,&pB.bloque)
       end}
     end
@@ -112,13 +125,6 @@ end
 
 
 class Object
-  def
-  partial_def firma, clases, &bloque
-    self.singleton_class.partial_def firma, clases, &bloque
-  end
-  def multimethods
-    []
-  end
 
   def respond_to?(sym,priv=false,clases=nil)
     if(clases.nil?)
@@ -131,8 +137,4 @@ class Object
   def dame_clase
     self.singleton_class
   end
-
 end
-
-
-
